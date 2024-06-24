@@ -2,8 +2,11 @@ from flask import Flask, request, jsonify, send_file
 import os
 import qrcode
 from mongoclient import MongoObject
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app, origins=['http://127.0.0.1:3001'])   # Adiciona a extensão Flask-CORS ao aplicativo Flask
 
 # Colocar o seu ip para teste em localhost usando o celular.
 MYIP = "192.168.15.7"
@@ -29,14 +32,13 @@ def get_data():
 
     return jsonify(documents)
 
-@app.route('/create/', methods=['POST'])
 def receive_payload():
     data = request.json
     if not data or 'base64' not in data or 'uuid' not in data:
         return jsonify({'error': 'Payload is missing base64 or uuid field'}), 400
 
     client = MongoObject(MONGO_URI)
-    client.add_data(MONGO_DB, MONGO_COLLECTION, data)
+    client[MONGO_DB][MONGO_COLLECTION].insert_one(data)  # Direct access using strings
     client.close()
     qr_code_string = f"http://{MYIP}:{PORT}/data/?uuid=" + data['uuid']
     img = qrcode.make(qr_code_string)
