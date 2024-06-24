@@ -1,20 +1,16 @@
 import React from 'react';
-import UploadImage from './components/UploadImage';
-import ImageList from './components/ImageList';
+import './App.css';
+import { sendPostRequest } from './api';
 
-const App = () => {
-    const handleUpload = () => {
-        // Atualize a lista de imagens
-        window.location.reload();
-    };
-
+function App() {
     return (
-        <div>
-            <h1>Gerenciador de Imagens do Restaurante</h1>
-            <UploadImage onUpload={handleUpload} />
-            <ImageList />
+        <div className="App">
+            <header className="App-header">
+                <h1>Minha Aplicação</h1>
+                <button onClick={sendPostRequest}>Enviar Requisição</button>
+            </header>
         </div>
     );
-};
+}
 
 export default App;

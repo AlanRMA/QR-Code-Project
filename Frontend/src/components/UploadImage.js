@@ -1,31 +1,48 @@
 import React, { useState } from 'react';
-import { uploadImage } from '../api';
+import { v4 as uuidv4 } from 'uuid';
 
-const UploadImage = ({ onUpload }) => {
-    const [file, setFile] = useState(null);
+const UploadImage = () => {
+    const [base64String, setBase64String] = useState('');
+    const [responseMessage, setResponseMessage] = useState('');
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+    const handleFileSelect = (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64 = reader.result.replace("data:", "").replace(/^.+,/, "");
+            setBase64String(base64);
+        };
+        reader.readAsDataURL(file);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('image', file);
+    const uploadImage = async () => {
+        const payload = {
+            base64: base64String,
+            uuid: uuidv4()
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        };
 
         try {
-            await uploadImage(formData);
-            onUpload(); // Chama a função de callback para atualizar a lista de imagens
+            const response = await fetch('https://f3ab9269-e495-4e9f-92ed-48c02a09974c-00-2jqb9bh52d3bj.worf.replit.dev/upload', requestOptions);
+            const data = await response.json();
+            setResponseMessage(`Success: ${data.message}`);
         } catch (error) {
-            console.error('Erro ao fazer upload da imagem', error);
+            console.error('Error:', error);
+            setResponseMessage('Error uploading image');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="file" onChange={handleFileChange} />
-            <button type="submit">Upload</button>
-        </form>
+        <div>
+            <input type="file" onChange={handleFileSelect} />
+            <button onClick={uploadImage}>Upload Image</button>
+            {responseMessage && <p>{responseMessage}</p>}
+        </div>
     );
 };
 
