@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 # Colocar o seu ip para teste em localhost usando o celular.
 MYIP = "192.168.15.7"
+PORT = "3000"
 MONGO_URI = os.getenv('MONGO_URI')
 MONGO_DB = os.getenv('MONGO_DB')
 MONGO_COLLECTION = os.getenv('MONGO_COLLECTION')
@@ -37,7 +38,7 @@ def receive_payload():
     client = MongoObject(MONGO_URI)
     client.add_data(MONGO_DB, MONGO_COLLECTION, data)
     client.close()
-    qr_code_string = f"http://{MYIP}:3000/data/?uuid=" + data['uuid']
+    qr_code_string = f"http://{MYIP}:{PORT}/data/?uuid=" + data['uuid']
     img = qrcode.make(qr_code_string)
     img.save("./temp/qrcode.png")
     return send_file('./temp/qrcode.png', mimetype='image/png')
