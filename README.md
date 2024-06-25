@@ -1,7 +1,7 @@
 # Projeto QR Code
 
 Este projeto consiste em uma aplicação que gera QR codes com base em uma imagem fornecida pelo usuário.
-![screenshot](backend/temp/Screenshot_2024-06-25_at_14.25.00.png)
+![screenshot](Backend/temp/Screenshot_2024-06-25_at_14.25.00.png)
 
 ## Pré-requisitos
 
